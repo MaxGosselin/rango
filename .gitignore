@@ -36,3 +36,9 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Django Specific #
+###################
+
+tango_with_django_project/tango_with_django_project/settings.py
+
