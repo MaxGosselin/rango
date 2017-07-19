@@ -6,10 +6,16 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("""rango says please clap
+    #dict for template engine
+    #note: boldmessage is same as {{ boldmessage }} in the template
+    context_dict = {'boldmessage': "Will you PLEASE clap? :("}
 
-    <br/> <a href='/rango/about/'>About</a>""")
+    #return a rendered response; first param is the template we want to use
+    return render(request, 'rango/index.html', context=context_dict)
 
 def about(request):
-    return HttpResponse("""rango says i'm about it
-    <br/> <a href='/rango/'>Index</a>""")
+    context_dict = {'aboutText': "Rango says I'm about this life.",
+                    'authorText': "This tutorial compiled by Max Gosselin."
+            }
+
+    return render(request, 'rango/about.html', context=context_dict)
