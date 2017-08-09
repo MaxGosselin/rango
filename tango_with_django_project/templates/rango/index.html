@@ -11,15 +11,24 @@
     <body>
         <h1>Rango says...</h1>
         <div>
-            Hey there partner! </br>
-            <strong>{{ boldmessage }}</strong><br />
-        </div>
-        <div>
             <a href="/rango/about/">About</a><br />
             <video width="720" height="540" autoplay controls>
                 <source src="{% static "webms/b_sagan.webm" %}"
                    type="video/webm">
             </video>
+        </div>
+        <div>
+            {% if categories %}
+            <ul>
+                {% for category in categories %}
+                    <li>
+                        <a href="/rango/category/{{ category.slug }}">{{ category.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <strong>There are no categories present.</strong>
+            {% endif %}
         </div>
     </body>
 
