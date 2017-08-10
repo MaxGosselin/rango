@@ -9,11 +9,18 @@ def index(request):
 
 
     # Get a list of all categories from the db.
-    # Pass top 5 -- by likes -- to the context dict
+    # Pass top 5 categories -- by likes -- to the context dict
     category_list = Category.objects.order_by('likes')[:5]
 
+    # Get top 5 pages
+    page_list = Page.objects.order_by('views')[:5]
+
     #dict for template engine
-    context_dict = {'categories': category_list}
+    # Pass top 5 categories -- by likes -- to the context dict
+    # Pass top 5 pages -- by likes -- to the context dict
+    context_dict = {'categories': category_list,
+                    'pages': page_list,
+                    }
 
     #return a rendered response; first param is the template we want to use
     return render(request, 'rango/index.html', context=context_dict)

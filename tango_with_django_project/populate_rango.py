@@ -3,6 +3,8 @@
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tango_with_django_project.settings')
 
+#Random for stats
+from random import randint
 
 import django
 django.setup()
@@ -63,7 +65,7 @@ def populate():
 def add_page(cat, title, url, views=0, likes=0):
     p = Page.objects.get_or_create(category=cat, title=title)[0]
     p.url = url
-    p.views = views
+    p.views = randint(1, 500)
     p.likes = likes
     p.save()
     return p
