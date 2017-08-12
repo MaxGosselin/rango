@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.shortcuts import render
 from django.http import HttpResponse
 
 from rango.models import Category, Page
+from rango.forms import CategoryForm, PageForm
 
 def index(request):
 
@@ -55,4 +57,54 @@ def show_category(request, category_name_slug):
 
     return render(request, 'rango/category.html', context_dict)
 
+def add_category(request):
+    form = CategoryForm()
+
+    # HTTP POST?
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+
+        # Valid form?
+        if form.is_valid():
+            # Save to database
+            form.save(commit=True)
+
+            # We can go anywhere from here, a confirmation msg, or to some other page.
+            # Since the newest categories are shown at the index page, we'll go there.
+            return index(request)
+        else:
+            # Form was invalid, print errors to terminal.
+            print(form.errors)
+
+    # Get to here: form isnt valid and complete
+    # This return will handle all cases: bad form, new form, missing cases.
+    # Render the form with error messages too (if any).
+    return render(request, 'rango/add_category.html', {'form': form})
+
+def add_page(request, category_name_slug):
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except Category.DoesNotExist:
+        category = None
+
+    form = PageForm()
+
+    # POST?
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+
+        if form.is_valid():
+            # Save to db
+            page = form.save(commit=False)
+            page.category = category
+            page.views = 0
+            page.save()
+
+            # Back to category list.
+            return show_category(request, category_name_slug)
+        else:
+            print(form.errors)
+    # Render form again with error messages.
+    context_dict = {'form': form, 'category':category}
+    return render(request, 'rango/add_page.html', context_dict)
 
