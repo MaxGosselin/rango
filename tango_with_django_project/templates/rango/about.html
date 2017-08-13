@@ -1,22 +1,21 @@
-<!DOCTYPE html>
-
+{% extends 'rango/base.html' %}
 {% load staticfiles %}
 
-<html>
-    <head>
-        <title>About</title>
-    </head>
+{% block title_block %}
+    About
+{% endblock %}
 
-    <body>
-        <div>
-            {{ aboutText }}</br>
-        </div>
-        <div>
-            <a href="/rango/">Back to the index</a><br />
-            <img src="{{ MEDIA_URL }}chillards.jpg"  
-                 alt="cold blooded"/>
-        </div>
-        <div>
-            {{ authorText }}</br>
-    </body>
-</html>
+{% block body_block %}
+    <div>
+        {{ aboutText }}</br>
+    </div>
+    
+    <div>
+        <img src="{{ MEDIA_URL }}chillards.jpg"  
+              alt="cold blooded"/>
+    </div>
+    <div>
+        {{ authorText }}</br>
+    </div>
+{% endblock %}
+

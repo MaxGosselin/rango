@@ -1,40 +1,38 @@
-<!DOCTYPE html>
-
+{% extends 'rango/base.html' %}
 {% load staticfiles %} <!-- New line -->
 
-<html>
+{% block title_block %}
+    Home
+{% endblock %}
+        
+{% block body_block %}
+    <h1>Rango says...</h1>
+    <div id="splash_vid">
+        <video width="720" height="540" autoplay controls>
+            <source src="{% static "webms/b_sagan.webm" %}"
+                type="video/webm">
+        </video>
+    </div>
 
-    <head>
-        <title>Rango</title>
-    </head>
-
-    <body>
-        <h1>Rango says...</h1>
-        <div id="splash_vid">
-            <a href="/rango/about/">About</a><br />
-            <a href="/rango/add_category">Add a new Category</a><br />
-            <video width="720" height="540" autoplay controls>
-                <source src="{% static "webms/b_sagan.webm" %}"
-                   type="video/webm">
-            </video>
-        </div>
-        <div id="top_cats">
-            <p>Most Liked Categories</p>
-            {% if categories %}
+    <div id="top_cats">
+        <p>Most Liked Categories</p>
+        {% if categories %}
             <ul>
                 {% for category in categories %}
                     <li>
-                        <a href="/rango/category/{{ category.slug }}">{{ category.name }}</a>
+                        <a href="{% url 'show_category' category.slug %}">
+                            {{ category.name }}</a>
                     </li>
                 {% endfor %}
             </ul>
-            {% else %}
-                <strong>There are no categories present.</strong>
-            {% endif %}
-        </div>
-        <div id="top_pages">
-            <p> Most Viewed Pages</p>
-            {% if pages %}
+        {% else %}
+            <strong>There are no categories present.</strong>
+        {% endif %}
+    </div>
+    
+    <div id="top_pages">
+        <p> Most Viewed Pages</p>
+        {% if pages %}
             <ul>
                 {% for page in pages %}
                     <li>
@@ -42,10 +40,8 @@
                     </li>
                 {% endfor %}
             </ul>
-            {% else %}
-                <strong>There are no pages present.</strong>
-            {% endif %}
-        </div>
-    </body>
-
-</html>
+        {% else %}
+            <strong>There are no pages present.</strong>
+        {% endif %}
+     </div>
+{% endblock %}
