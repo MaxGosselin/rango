@@ -7,6 +7,13 @@
         
 {% block body_block %}
     <h1>Rango says...</h1>
+    <p>
+    {% if user.is_authenticated %}
+        howdy {{ user.username }}
+    {% else %}
+        Hey there stranger!
+    {% endif %}
+    
     <div id="splash_vid">
         <video width="720" height="540" autoplay controls>
             <source src="{% static "webms/b_sagan.webm" %}"

@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
@@ -149,4 +150,30 @@ def register(request):
             {'user_form': user_form,
                 'profile_form': profile_form,
                 'registered': registered})
+
+def user_login(request):
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        # If we have a user obj, auth passed.
+        if user:
+            if user.is_active:
+                # Valid, active user. Let's log them in.
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                # Inactive account.
+                return HttpResponse("Your account is disabled.")
+        else:
+            # An inactive account was used - no loggin in!
+            print(("Invalid login details" +\
+                    ": {0}, {1}").format(username, password))
+            return HttpResponse("Invalid login details supplied.")
+    else:
+        # No login attempted, render login form.
+        return render(request, 'rango/login.html', {})
 
