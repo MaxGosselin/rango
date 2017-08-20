@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
@@ -140,7 +142,7 @@ def register(request):
             # Invalid form or forms. Print errors to term.
             print(user_form.errors, profile_form.errors)
     else:
-        # Not a POST, renderforms
+        # Not a POST, render form
         user_form = UserForm()
         profile_form = UserProfileForm()
 
@@ -177,3 +179,10 @@ def user_login(request):
         # No login attempted, render login form.
         return render(request, 'rango/login.html', {})
 
+
+@login_required
+def user_logout(request):
+    # Logout
+    logout(request)
+    # Back to index
+    return HttpResponseRedirect(reverse('index'))
