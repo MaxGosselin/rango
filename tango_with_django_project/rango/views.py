@@ -13,11 +13,6 @@ from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
 def index(request):
-    # Test cookie
-    request.session.set_test_cookie()
-
-
-
     # Get a list of all categories from the db.
     # Pass top 5 categories -- by likes -- to the context dict
     category_list = Category.objects.order_by('likes')[:5]
@@ -32,11 +27,12 @@ def index(request):
                     'pages': page_list,
                     }
 
+    # Cookie handling
+    visitor_cookie_handler(request)
+    context_dict['visits'] = request.session['visits']
+
     # Build response; first param is the template we want to use
     response = render(request, 'rango/index.html', context=context_dict)
-
-    # Call the cookie helper
-    visitor_cookie_handler(request, response)
 
     # Return response back to the user, updating cokies that need to be changed
     return response
@@ -47,7 +43,10 @@ def about(request):
         print("TEST COOKIE WORKED!")
         request.session.delete_test_cookie()
 
-    context_dict = {'aboutText': "Rango says I'm about this life.",
+    visitor_cookie_handler(request)
+
+    context_dict = {'visits': request.session['visits'],
+                    'aboutText': "Rango says I'm about this life.",
                     'authorText': "This tutorial compiled by Max Gosselin."
             }
 
@@ -203,26 +202,36 @@ def user_logout(request):
     # Back to index
     return HttpResponseRedirect(reverse('index'))
 
-def visitor_cookie_handler(request, response):
+def get_server_side_cookie(request, cookie, default_val=None):
+    val = request.session.get(cookie)
+    if not val:
+        val = default_val
+    return val
+
+def visitor_cookie_handler(request):
     # Cookie helper
     # Get number of visits to the site
 
-    visits = int(request.COOKIES.get('visits', '1'))
+    visits = get_server_side_cookie(request, 'visits', '1')
 
-    last_visit_cookie = request.COOKIES.get('last_visit', str(datetime.now()))
-    last_visit_time = datetime.strptime(last_visit_cookie[:-7], '%Y-%m-%d %H:%M:%S')
+    last_visit_cookie = get_server_side_cookie(request,
+            'last_visit', str(datetime.now()))
+    last_visit_time = datetime.strptime(last_visit_cookie[:-7],
+            '%Y-%m-%d %H:%M:%S')
 
     # If it's been more than a day since last visit...
-    if (datetime.now() - last_visit_time).days > 0:
+    if (datetime.now() - last_visit_time).seconds > 0:
         visits = visits + 1
         # Update the last visit cookie now that we have updated the count
-        response.set_cookie('last_visit', str(datetime.now()))
+        request.session['last_visit'] = str(datetime.now())
+    elif visits:
+        pass
     else:
         visits = 1
         # Set the last visit cookie
-        response.set_cookie('last_visit', last_visit_cookie)
+        request.session['last_visit'] = last_visit_cookie
 
     # Update/set the visits cookie
-    response.set_cookie('visits', visits)
+    request.session['visits'] = visits
 
 
