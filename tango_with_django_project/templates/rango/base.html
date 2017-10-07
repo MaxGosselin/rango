@@ -33,7 +33,7 @@
                 <li><a href="{% url 'add_category' %}">Add New Category</a></li>
                 </ hr>
                 <li><a href="{% url 'auth_logout' %}?next=/rango/">Logout</a></li>
-
+                <li><a href="{% url 'auth_password_change' %}">Change Password</a></li>
             {% else %}
                 <li><a href="{% url 'auth_login' %}">Login</a></li>
                 <li><a href="{% url 'registration_register' %}">Register</a></li>
